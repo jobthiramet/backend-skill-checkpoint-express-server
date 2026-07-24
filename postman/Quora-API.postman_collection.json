@@ -1,0 +1,117 @@
+{
+  "info": {
+    "name": "Quora API - TechUp Skill Checkpoint",
+    "description": "Postman collection ตาม API Design ของโจทย์ Backend Skill Checkpoint",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. POST Create Question",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"What is the capital of France?\",\n  \"description\": \"This is a basic geography question asking about the capital city of France.\",\n  \"category\": \"Geography\"\n}"
+        },
+        "url": "http://localhost:4000/questions"
+      }
+    },
+    {
+      "name": "2. GET All Questions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:4000/questions"
+      }
+    },
+    {
+      "name": "3. GET Question by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:4000/questions/1"
+      }
+    },
+    {
+      "name": "4. PUT Update Question",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"What is the capital of Germany?\",\n  \"description\": \"Updated question asking about the capital city of Germany.\",\n  \"category\": \"Geography\"\n}"
+        },
+        "url": "http://localhost:4000/questions/1"
+      }
+    },
+    {
+      "name": "5. GET Search Questions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:4000/questions/search?category=Geography"
+      }
+    },
+    {
+      "name": "6. POST Create Answer",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"content\": \"The capital of France is Paris.\"\n}"
+        },
+        "url": "http://localhost:4000/questions/1/answers"
+      }
+    },
+    {
+      "name": "7. GET Answers by Question ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:4000/questions/1/answers"
+      }
+    },
+    {
+      "name": "8. POST Vote Question",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"vote\": 1\n}"
+        },
+        "url": "http://localhost:4000/questions/1/vote"
+      }
+    },
+    {
+      "name": "9. POST Vote Answer",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"vote\": -1\n}"
+        },
+        "url": "http://localhost:4000/answers/1/vote"
+      }
+    },
+    {
+      "name": "10. DELETE Answers by Question ID",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "http://localhost:4000/questions/1/answers"
+      }
+    },
+    {
+      "name": "11. DELETE Question by ID",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "http://localhost:4000/questions/1"
+      }
+    }
+  ]
+}
