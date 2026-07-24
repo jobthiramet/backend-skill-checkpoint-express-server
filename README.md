@@ -36,9 +36,14 @@ REST API สำหรับระบบถาม–ตอบสไตล์ Quor
 ```text
 backend-skill-checkpoint-express-server/
 ├── app.mjs                 # จุดเริ่มต้น Express Server + เชื่อม Router
-├── apps/
+├── routers/
 │   ├── questions.mjs       # Routes ของคำถาม, ค้นหา, คำตอบ, โหวตคำถาม
 │   └── answers.mjs         # Route โหวตคำตอบ
+├── middlewares/
+│   ├── question.validation.mjs
+│   ├── answer.validation.mjs
+│   ├── search.validation.mjs
+│   └── vote.validation.mjs
 ├── utils/
 │   └── db.mjs              # PostgreSQL Connection Pool
 ├── .env                    # ค่า Environment (ไม่ commit ขึ้น Git)

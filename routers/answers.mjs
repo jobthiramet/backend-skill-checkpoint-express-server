@@ -1,16 +1,13 @@
 import { Router } from "express";
 import connectionPool from "../utils/db.mjs";
+import { validateVoteBody } from "../middlewares/vote.validation.mjs";
 
 const answerRouter = Router();
 
 // POST /answers/:answerId/vote - Vote on an answer
-answerRouter.post("/:answerId/vote", async (req, res) => {
+answerRouter.post("/:answerId/vote", validateVoteBody, async (req, res) => {
   const { answerId } = req.params;
   const { vote } = req.body;
-
-  if (vote !== 1 && vote !== -1) {
-    return res.status(400).json({ message: "Invalid vote value." });
-  }
 
   try {
     const answerCheck = await connectionPool.query(
@@ -31,7 +28,6 @@ answerRouter.post("/:answerId/vote", async (req, res) => {
       message: "Vote on the answer has been recorded successfully.",
     });
   } catch (error) {
-    console.error("Error voting on answer:", error);
     return res.status(500).json({ message: "Unable to vote answer." });
   }
 });

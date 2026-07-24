@@ -1,29 +1,15 @@
 import { Router } from "express";
 import connectionPool from "../utils/db.mjs";
+import { validateQuestionBody } from "../middlewares/question.validation.mjs";
+import { validateAnswerBody } from "../middlewares/answer.validation.mjs";
+import { validateSearchQuery } from "../middlewares/search.validation.mjs";
+import { validateVoteBody } from "../middlewares/vote.validation.mjs";
 
 const questionRouter = Router();
 
-// =========================
-// Questions (ตาม API Design)
-// =========================
-
 // POST /questions - Create a new question
-questionRouter.post("/", async (req, res) => {
+questionRouter.post("/", validateQuestionBody, async (req, res) => {
   const { title, description, category } = req.body;
-
-  if (
-    !title ||
-    typeof title !== "string" ||
-    !title.trim() ||
-    !description ||
-    typeof description !== "string" ||
-    !description.trim() ||
-    !category ||
-    typeof category !== "string" ||
-    !category.trim()
-  ) {
-    return res.status(400).json({ message: "Invalid request data." });
-  }
 
   try {
     await connectionPool.query(
@@ -49,12 +35,8 @@ questionRouter.get("/", async (req, res) => {
 });
 
 // GET /questions/search - Search questions by title or category
-questionRouter.get("/search", async (req, res) => {
+questionRouter.get("/search", validateSearchQuery, async (req, res) => {
   const { title, category } = req.query;
-
-  if ((!title || !String(title).trim()) && (!category || !String(category).trim())) {
-    return res.status(400).json({ message: "Invalid search parameters." });
-  }
 
   try {
     const conditions = [];
@@ -85,39 +67,34 @@ questionRouter.get("/search", async (req, res) => {
 });
 
 // POST /questions/:questionId/answers - Create an answer for a question
-questionRouter.post("/:questionId/answers", async (req, res) => {
-  const { questionId } = req.params;
-  const { content } = req.body;
+questionRouter.post(
+  "/:questionId/answers",
+  validateAnswerBody,
+  async (req, res) => {
+    const { questionId } = req.params;
+    const { content } = req.body;
 
-  if (
-    !content ||
-    typeof content !== "string" ||
-    !content.trim() ||
-    content.trim().length > 300
-  ) {
-    return res.status(400).json({ message: "Invalid request data." });
-  }
+    try {
+      const questionCheck = await connectionPool.query(
+        `SELECT id FROM questions WHERE id = $1`,
+        [questionId]
+      );
 
-  try {
-    const questionCheck = await connectionPool.query(
-      `SELECT id FROM questions WHERE id = $1`,
-      [questionId]
-    );
+      if (questionCheck.rows.length === 0) {
+        return res.status(404).json({ message: "Question not found." });
+      }
 
-    if (questionCheck.rows.length === 0) {
-      return res.status(404).json({ message: "Question not found." });
+      await connectionPool.query(
+        `INSERT INTO answers (question_id, content) VALUES ($1, $2)`,
+        [questionId, content.trim()]
+      );
+
+      return res.status(201).json({ message: "Answer created successfully." });
+    } catch (error) {
+      return res.status(500).json({ message: "Unable to create answers." });
     }
-
-    await connectionPool.query(
-      `INSERT INTO answers (question_id, content) VALUES ($1, $2)`,
-      [questionId, content.trim()]
-    );
-
-    return res.status(201).json({ message: "Answer created successfully." });
-  } catch (error) {
-    return res.status(500).json({ message: "Unable to create answers." });
   }
-});
+);
 
 // GET /questions/:questionId/answers - Get answers for a question
 questionRouter.get("/:questionId/answers", async (req, res) => {
@@ -171,13 +148,9 @@ questionRouter.delete("/:questionId/answers", async (req, res) => {
 });
 
 // POST /questions/:questionId/vote - Vote on a question
-questionRouter.post("/:questionId/vote", async (req, res) => {
+questionRouter.post("/:questionId/vote", validateVoteBody, async (req, res) => {
   const { questionId } = req.params;
   const { vote } = req.body;
-
-  if (vote !== 1 && vote !== -1) {
-    return res.status(400).json({ message: "Invalid vote value." });
-  }
 
   try {
     const questionCheck = await connectionPool.query(
@@ -223,23 +196,9 @@ questionRouter.get("/:questionId", async (req, res) => {
 });
 
 // PUT /questions/:questionId - Update a question by ID
-questionRouter.put("/:questionId", async (req, res) => {
+questionRouter.put("/:questionId", validateQuestionBody, async (req, res) => {
   const { questionId } = req.params;
   const { title, description, category } = req.body;
-
-  if (
-    !title ||
-    typeof title !== "string" ||
-    !title.trim() ||
-    !description ||
-    typeof description !== "string" ||
-    !description.trim() ||
-    !category ||
-    typeof category !== "string" ||
-    !category.trim()
-  ) {
-    return res.status(400).json({ message: "Invalid request data." });
-  }
 
   try {
     const result = await connectionPool.query(

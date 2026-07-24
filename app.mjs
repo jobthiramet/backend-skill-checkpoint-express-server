@@ -1,6 +1,6 @@
 import express from "express";
-import questionRouter from "./apps/questions.mjs";
-import answerRouter from "./apps/answers.mjs";
+import questionRouter from "./routers/questions.mjs";
+import answerRouter from "./routers/answers.mjs";
 
 const app = express();
 const port = 4000;
